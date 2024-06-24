@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather API Example</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var apiUrl = 'http://api.weatherapi.com/v1/current.json?key=3627c39e0ece47a396b163556242406&q=Sintok&aqi=no';
+
+            // Fetch weather data
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle successful response
+                    const weather = data.current;
+                    $('p').html(`Temperature in ${data.location.name}: ${weather.temp_c}°C`);
+                    $('p').append(`<br>Last Update time: ${data.location.localtime}`);
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error fetching data:', error);
+                    $('p').html('Error fetching data');
+                });
+        });
+    </script>
+</head>
+<body>
+    <p>Loading...</p>
+</body>
+</html>
