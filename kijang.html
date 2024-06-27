@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIJANG EMAS</title>
+    <style>
+        #Monthly,
+        #Bydate {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>KIJANG EMAS</h1>
+
+    <label for="selection">Choose Option:</label>
+    <select name="selection" id="selection">
+        <option value="Option">Select Option.....</option>
+        <option value="Month">Month</option>
+        <option value="Date">Date</option>
+        <option value="Latest">Latest</option>
+    </select>
+
+    <div id="Monthly">
+        <label for="Yearinput">Year</label>
+        <input id="Yearinput" type="number"><br>
+
+        <label for="Monthinput">Month</label>
+        <input id="Monthinput" type="number" min="1" max="12"><br>
+
+        <div id="Bydate">
+            <label for="Dateinput">Date</label>
+            <input id="Dateinput" type="number" min="1" max="31"><br>
+        </div>
+    </div>
+
+    <button id="submit">Submit</button>
+    <p id="result"></p>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#selection').change(function () {
+                var selectedOption = $(this).val();
+                if (selectedOption == "Option" || selectedOption == "Latest") {
+                    $('#Monthly, #Bydate').hide();
+                } else if (selectedOption == 'Month') {
+                    $('#Monthly').show();
+                    $('#Bydate').hide();
+                } else if (selectedOption == "Date") {
+                    $('#Monthly').show();
+                    $('#Bydate').show();
+                }
+            });
+
+            $('#submit').click(function () {
+                var getstatus = "null";
+                var selectedOption = $('#selection').val();
+                var year = $('#Yearinput').val();
+                var month = $('#Monthinput').val();
+                var date = $('#Dateinput').val();
+                var apiUrl = 'none';
+
+                if (selectedOption == "Latest") {
+                    getstatus = "Fetch";
+                    apiUrl = 'https://api.bnm.gov.my/public/kijang-emas';
+                } else if (selectedOption == 'Month') {
+                    getstatus = "Fetch";
+                    apiUrl = `https://api.bnm.gov.my/public/kijang-emas/date/${year}-${month}`;
+                } else if (selectedOption == "Date") {
+                    getstatus = "Fetch";
+                    apiUrl = `https://api.bnm.gov.my/public/kijang-emas/date/${year}-${month}-${date}`;
+                } else {
+                    getstatus = "Never";
+                }
+
+                if (getstatus == "Fetch") {
+                    fetch(apiUrl, {
+                        headers: {
+                            'Accept': 'application/vnd.BNM.API.v1+json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            $('#result').html(`Last Update time: ${data.meta.last_updated}`);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                            $('#result').html('Error fetching data');
+                        });
+                } else {
+                    $('#result').html("Please select options");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
