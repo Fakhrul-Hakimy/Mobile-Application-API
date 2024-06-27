@@ -1,71 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>News API Example</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h2 class="text-center mb-4">News API Example</h2>
+                <div id="newstitle" class="mt-4"></div>
+                <div class="form-group">
+                    <select id="section" class="form-control">
+                        <option value="0">Select a section</option>
+                        <option value="arts">Arts</option>
+                        <option value="automobiles">Automobiles</option>
+                        <option value="books/review">Books Review</option>
+                        <option value="business">Business</option>
+                        <option value="fashion">Fashion</option>
+                        <option value="food">Food</option>
+                        <option value="health">Health</option>
+                        <option value="home">Home</option>
+                        <option value="insider">Insider</option>
+                        <option value="magazine">Magazine</option>
+                        <option value="movies">Movies</option>
+                        <option value="nyregion">NY Region</option>
+                        <option value="obituaries">Obituaries</option>
+                        <option value="opinion">Opinion</option>
+                        <option value="politics">Politics</option>
+                        <option value="realestate">Real Estate</option>
+                        <option value="science">Science</option>
+                        <option value="sports">Sports</option>
+                        <option value="sundayreview">Sunday Review</option>
+                        <option value="technology">Technology</option>
+                        <option value="theater">Theater</option>
+                        <option value="t-magazine">T Magazine</option>
+                        <option value="travel">Travel</option>
+                        <option value="upshot">Upshot</option>
+                        <option value="us">US</option>
+                        <option value="world">World</option>
+                    </select>
+                </div>
+                <button id="Btn" class="btn btn-primary btn-block">Submit</button>
+                <div id="newsContent" class="mt-4"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
         $(document).ready(function () {
-            // API URL with your API key (replace `yourkey` with your actual API key)
             var apiKey = 'TYvxdFGtbPHNqMJpvTEEGcN29cnvGWzE';
             var apiUrl = 'https://api.nytimes.com/svc/topstories/v2/{section}.json?api-key=' + apiKey;
 
-            // When select value changes
-            $('#section').change(function () {
-                var section = $(this).val();
+            $('#Btn').click(function () {
+                var section = $('#section').val();
+                if (section !== "0") {
+                    // Log user interaction
+                    logInteraction('News API', section);
 
-                // Fetch data for selected section
-                fetch(apiUrl.replace('{section}', section))
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Handle response data here
-                        $('p').html(`Last Update time: ${data.last_updated}`);
-                    })
-                    .catch(error => {
-                        // Handle errors
-                        console.error('Error fetching data:', error);
-                        $('p').html('Error fetching data');
-                    });
+                    fetch(apiUrl.replace('{section}', section))
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            $('#newsContent').empty(); // Clear previous content
+                            $('#newstitle').html(`<p>Last Update time: ${moment(data.last_updated).format('MMMM Do YYYY, h:mm:ss a')}</p>`);
+                            $('#newstitle').append(`<p>News Found: ${data.num_results}</p>`);
+
+                            for (var i = 0; i < data.num_results; i++) {
+                                $('#newsContent').append(`<hr><p><strong>News ${i + 1}:</strong> <a href="${data.results[i].url}">${data.results[i].title}</a></p>`);
+                                $('#newsContent').append(`<p><strong>Abstract:</strong> ${data.results[i].abstract}</p>`);
+                                $('#newsContent').append(`<p><strong>Publish On:</strong> ${moment(data.results[i].published_date).format('MMMM Do YYYY')}</p>`);
+
+                                // Check if multimedia is not empty and has a URL
+                                if (data.results[i].multimedia.length > 0 && data.results[i].multimedia[0].url) {
+                                    $('#newsContent').append(`<img src="${data.results[i].multimedia[0].url}" class="img-fluid mt-3 mb-3" alt="Image">`);
+                                } else {
+                                    $('#newsContent').append(`<p><em>No image available</em></p>`);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                            $('#newsContent').html('<p>Error fetching data</p>');
+                        });
+                }
             });
+
+            // Function to log user interaction
+            function logInteraction(action, section) {
+                var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+                var timestamp = new Date().toLocaleString();
+                var interaction = {
+                    timestamp: timestamp,
+                    action: action,
+                    section: section
+                };
+                interactions.push(interaction);
+                localStorage.setItem('userInteractions', JSON.stringify(interactions));
+            }
         });
+
     </script>
-</head>
-<body>
-    <select id="section" name="section">
-        <option value="">Select a section</option>
-        <option value="arts">Arts</option>
-        <option value="automobiles">Automobiles</option>
-        <option value="books/review">Books Review</option>
-        <option value="business">Business</option>
-        <option value="fashion">Fashion</option>
-        <option value="food">Food</option>
-        <option value="health">Health</option>
-        <option value="home">Home</option>
-        <option value="insider">Insider</option>
-        <option value="magazine">Magazine</option>
-        <option value="movies">Movies</option>
-        <option value="nyregion">NY Region</option>
-        <option value="obituaries">Obituaries</option>
-        <option value="opinion">Opinion</option>
-        <option value="politics">Politics</option>
-        <option value="realestate">Real Estate</option>
-        <option value="science">Science</option>
-        <option value="sports">Sports</option>
-        <option value="sundayreview">Sunday Review</option>
-        <option value="technology">Technology</option>
-        <option value="theater">Theater</option>
-        <option value="t-magazine">T Magazine</option>
-        <option value="travel">Travel</option>
-        <option value="upshot">Upshot</option>
-        <option value="us">US</option>
-        <option value="world">World</option>
-    </select>
-    <p>Loading...</p>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
