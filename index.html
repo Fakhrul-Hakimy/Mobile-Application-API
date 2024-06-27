@@ -1,0 +1,42 @@
+<html>
+    <head>
+            <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    </head>
+
+<body>
+    <button id="newsButton">News</button>
+    <button id="logButton">Logs</button>
+
+    <script>
+        $(document).ready(function(){
+
+            $('#newsButton').click(function(){
+                logInteraction("MenuButton", "Access News")
+                window.location.href = 'news.html';
+            })
+            $('#logButton').click(function(){
+                logInteraction("MenuButton", "Access Logs")
+                window.location.href = 'log.html';
+            })
+
+
+        
+
+        function logInteraction(action, section) {
+            var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+            var timestamp = new Date().toLocaleString();
+            var interaction = {
+                timestamp: timestamp,
+                action: action,
+                section: section
+            };
+            interactions.push(interaction);
+            localStorage.setItem('userInteractions', JSON.stringify(interactions));
+        }
+    })
+    </script>
+</body>
+
+</html>
