@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News API Example</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var apiUrl = 'https://api.nytimes.com/svc/topstories/v2/world.json?api-key=yourkeyTYvxdFGtbPHNqMJpvTEEGcN29cnvGWzE';
+
+            // Fetch weather data
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+
+                    $('p').html(`<br>Last Update time: `${data.status});
+
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error fetching data:', error);
+                    $('p').html('Error fetching data');
+                });
+        });
+    </script>
+</head>
+
+<body>
+    <p>Loading...</p>
+</body>
+
+</html>
