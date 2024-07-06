@@ -13,35 +13,61 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-image: url('https://img.freepik.com/free-photo/top-view-old-french-newspaper-pieces_23-2149318857.jpg?w=1060&t=st=1720286203~exp=1720286803~hmac=ceda38e153156230b2ac4b14e844999b47730bde8c4e3ee573ce01822ce217db');
+            /* Replace with your image path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .white-bg-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px; /* Adjust as needed */
+        }
+
+        /* Custom CSS for responsiveness */
+        @media (max-width: 768px) {
+            .white-bg-container {
+                padding: 10px; /* Adjust padding for smaller screens */
+            }
+        }
+    </style>
 </head>
 
 <body>
-    
-    <div class="container mt-5">
-        
-        <button id="HomeBtn" class="btn btn-primary btn-block">Home</button>
+    <div class="container"><br>
+        <button id="HomeBtn" class="btn btn-primary btn-block mb-4">Home</button>
         <div class="row">
-            <div class="col-md-6">
-                <br>
-                <h2 class="text-center mb-4">User Interaction Logs</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Timestamp</th>
-                            <th scope="col">Action</th>
-                            <th scope="col">Section</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logsTableBody">
-                        <!-- Logs will be dynamically added here -->
-                    </tbody>
-                </table>
+            <div class="col-md-12 col-lg-6">
+                <div class="white-bg-container">
+                    <h2 class="text-center mb-4">User Interaction Logs</h2>
+                    <div class="table-responsive"> <!-- Ensure table responsiveness -->
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Timestamp</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Section</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Logs will be dynamically added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6">
-                <br>
-                <h2 class="text-center mb-4">Action Usage</h2>
-                <canvas id="actionChart"></canvas>
+            <div class="col-md-12 col-lg-6">
+                <div class="white-bg-container">
+                    <h2 class="text-center mb-4">Action Usage</h2>
+                    <canvas id="actionChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
