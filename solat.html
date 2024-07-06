@@ -152,7 +152,7 @@
                 var zone = $('#location').val();
                 if (zone !== "0") {
                     const apiUrl = `https://api.waktusolat.app/v2/solat/` + zone;
-                    logInteraction("Get Prayer Time", zone)
+                    logInteraction("Prayer API", zone)
                     fetch(apiUrl)
                         .then(response => {
                             if (!response.ok) {
