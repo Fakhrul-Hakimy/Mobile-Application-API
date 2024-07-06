@@ -8,6 +8,7 @@
 <body>
     <button id="newsButton">News</button>
     <button id="weatherButton">Weather</button>
+    <button id="solatButton">Solat</button>
     <button id="logButton">Logs</button>
 
     <script>
@@ -16,6 +17,11 @@
             $('#weatherButton').click(function(){
                 logInteraction("MenuButton", "Access Weather")
                 window.location.href = 'weather.html';
+            })
+
+            $('#solatButton').click(function(){
+                logInteraction("MenuButton", "Access Solat")
+                window.location.href = 'solat.html';
             })
 
             $('#newsButton').click(function(){

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waktu Solat</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <style>
+        body {
+            background-image: url('https://harianpost.my/wp-content/uploads/2022/01/bacaan-doa-dalam-solat.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .white-bg-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 white-bg-container">
+                <h2 class="text-center mb-4">Waktu Solat</h2>
+                <div class="form-group">
+                    <label for="location">Select Location:</label>
+                    <select id="location" class="form-control">
+                        <option value="sgr01">Selangor</option>
+                        <option value="jhr01">Johor</option>
+                        <option value="kdh01">Kedah</option>
+                        <!-- Add more locations as needed -->
+                    </select>
+                </div>
+                <button id="getPrayerTimes" class="btn btn-primary btn-block">Get Prayer Times</button>
+                <div id="prayerTimes" class="mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('getPrayerTimes').addEventListener('click', function () {
+                const zone = document.getElementById('location').value;
+                const apiUrl = `https://api.waktusolat.app/v2/solat/${zone}`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            const prayers = data.data.prayers;
+                            const prayerTimesDiv = document.getElementById('prayerTimes');
+                            prayerTimesDiv.innerHTML = ''; // Clear previous content
+                            prayerTimesDiv.innerHTML += '<h4>Prayer Times</h4>';
+                            prayers.forEach(prayer => {
+                                prayerTimesDiv.innerHTML += `<p><strong>Date:</strong> ${prayer.hijri}</p>`;
+                                prayerTimesDiv.innerHTML += `<p><strong>Subuh:</strong> ${moment.unix(prayer.fajr).format('HH:mm')}</p>`;
+                                prayerTimesDiv.innerHTML += `<p><strong>Syuruk:</strong> ${moment.unix(prayer.syuruk).format('HH:mm')}</p>`;
+                                prayerTimesDiv.innerHTML += `<p><strong>Zohor:</strong> ${moment.unix(prayer.dhuhr).format('HH:mm')}</p>`;
+                                prayerTimesDiv.innerHTML += `<p><strong>Asar:</strong> ${moment.unix(prayer.asr).format('HH:mm')}</p>`;
+                                prayerTimesDiv.innerHTML += `<p><strong>Maghrib:</strong> ${moment.unix(prayer.maghrib).format('HH:mm')}</p>`;
+                                prayerTimesDiv.innerHTML += `<p><strong>Isyak:</strong> ${moment.unix(prayer.isha).format('HH:mm')}</p>`;
+                                prayerTimesDiv.innerHTML += '<hr>';
+                            });
+                        } else {
+                            document.getElementById('prayerTimes').innerHTML = '<p>Error fetching prayer times. Please try again later.</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching prayer times:', error);
+                        document.getElementById('prayerTimes').innerHTML = '<p>Error fetching prayer times. Please try again later.</p>';
+                    });
+            });
+        });
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
