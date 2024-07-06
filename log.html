@@ -7,14 +7,22 @@
     <title>User Interaction Logs</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+    
     <div class="container mt-5">
+        
+        <button id="HomeBtn" class="btn btn-primary btn-block">Home</button>
         <div class="row">
             <div class="col-md-6">
+                <br>
                 <h2 class="text-center mb-4">User Interaction Logs</h2>
                 <table class="table">
                     <thead>
@@ -31,97 +39,122 @@
                 </table>
             </div>
             <div class="col-md-6">
+                <br>
                 <h2 class="text-center mb-4">Action Usage</h2>
                 <canvas id="actionChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Function to fetch and display logs from localStorage
-        function displayLogs() {
-            var logs = JSON.parse(localStorage.getItem('userInteractions')) || [];
-            var logsTableBody = document.getElementById('logsTableBody');
+        $(document).ready(function () {
+            // Function to fetch and display logs from localStorage
+            function displayLogs() {
+                var logs = JSON.parse(localStorage.getItem('userInteractions')) || [];
+                var logsTableBody = document.getElementById('logsTableBody');
 
-            logsTableBody.innerHTML = ''; // Clear previous entries
+                logsTableBody.innerHTML = ''; // Clear previous entries
 
-            logs.forEach((log, index) => {
-                var row = `
-                    <tr>
-                        <th scope="row">${index + 1}</th>
-                        <td>${log.timestamp}</td>
-                        <td>${log.action}</td>
-                        <td>${log.section}</td>
-                    </tr>
-                `;
-                logsTableBody.innerHTML += row;
-            });
+                logs.forEach((log, index) => {
+                    var row = `
+                        <tr>
+                            <th scope="row">${index + 1}</th>
+                            <td>${log.timestamp}</td>
+                            <td>${log.action}</td>
+                            <td>${log.section}</td>
+                        </tr>
+                    `;
+                    logsTableBody.innerHTML += row;
+                });
 
-            // Update action chart
-            updateActionChart(logs);
-        }
+                // Update action chart
+                updateActionChart(logs);
+            }
 
-        // Function to update action chart
-        function updateActionChart(logs) {
-            var actionCounts = {};
-            logs.forEach(log => {
-                if (actionCounts[log.action]) {
-                    actionCounts[log.action]++;
-                } else {
-                    actionCounts[log.action] = 1;
+            // Chart instance
+            var actionChart;
+
+            // Function to update action chart
+            function updateActionChart(logs) {
+                var actionCounts = {};
+                logs.forEach(log => {
+                    if (actionCounts[log.action]) {
+                        actionCounts[log.action]++;
+                    } else {
+                        actionCounts[log.action] = 1;
+                    }
+                });
+
+                var actionLabels = Object.keys(actionCounts);
+                var actionData = Object.values(actionCounts);
+
+                var ctx = document.getElementById('actionChart').getContext('2d');
+                if (actionChart) {
+                    actionChart.destroy();
                 }
-            });
-
-            var actionLabels = Object.keys(actionCounts);
-            var actionData = Object.values(actionCounts);
-
-            var ctx = document.getElementById('actionChart').getContext('2d');
-            var actionChart = new Chart(ctx, {
-                type: 'bar', // Change to 'bar' for a bar chart
-                data: {
-                    labels: actionLabels,
-                    datasets: [{
-                        label: 'Action Usage',
-                        data: actionData,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(153, 102, 255, 0.5)',
-                            'rgba(255, 159, 64, 0.5)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Actions'
+                actionChart = new Chart(ctx, {
+                    type: 'bar', // Change to 'bar' for a bar chart
+                    data: {
+                        labels: actionLabels,
+                        datasets: [{
+                            label: 'Action Usage',
+                            data: actionData,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 206, 86, 0.5)',
+                                'rgba(75, 192, 192, 0.5)',
+                                'rgba(153, 102, 255, 0.5)',
+                                'rgba(255, 159, 64, 0.5)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Actions'
+                                }
                             }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // Call displayLogs when the page loads
-        window.onload = function () {
+            // Log interaction function
+            function logInteraction(action, section) {
+                var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+                var timestamp = new Date().toLocaleString();
+                var interaction = {
+                    timestamp: timestamp,
+                    action: action,
+                    section: section
+                };
+                interactions.push(interaction);
+                localStorage.setItem('userInteractions', JSON.stringify(interactions));
+                displayLogs(); // Update display after logging new interaction
+            }
+
+            // Home button click event
+            $('#HomeBtn').click(function () {
+                logInteraction("MenuButton", "Access Home");
+                window.location.href = 'index.html';
+            });
+
+            // Call displayLogs when the page loads
             displayLogs();
-        };
+        });
     </script>
 </body>
 

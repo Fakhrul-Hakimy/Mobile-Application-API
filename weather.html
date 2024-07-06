@@ -29,6 +29,7 @@
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6 offset-md-3 white-bg-container">
+                <button id="HomeBtn" class="btn btn-primary btn-block">Home</button><br>
                 <h2 class="text-center mb-4">Weather API Example</h2>
                 <div id="weatherTitle" class="mt-4"></div>
                 <div class="form-group">
@@ -46,6 +47,10 @@
             var apiKey = '794ec3dd31384819b04c451a33ff83db';
             var apiUrl = 'https://api.weatherbit.io/v2.0/current';
             var weatherChart;
+            $('#HomeBtn').click(function(){
+                logInteraction("MenuButton", "Access Home")
+                window.location.href = 'index.html';
+            })
 
             $('#Btn').click(function () {
                 var city = $('#city').val();
@@ -139,17 +144,17 @@
             });
 
             // Function to log user interaction
-            function logInteraction(action, city) {
-                var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
-                var timestamp = new Date().toLocaleString();
-                var interaction = {
-                    timestamp: timestamp,
-                    action: action,
-                    city: city
-                };
-                interactions.push(interaction);
-                localStorage.setItem('userInteractions', JSON.stringify(interactions));
-            }
+            function logInteraction(action, section) {
+            var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+            var timestamp = new Date().toLocaleString();
+            var interaction = {
+                timestamp: timestamp,
+                action: action,
+                section: section
+            };
+            interactions.push(interaction);
+            localStorage.setItem('userInteractions', JSON.stringify(interactions));
+        }
         });
     </script>
 

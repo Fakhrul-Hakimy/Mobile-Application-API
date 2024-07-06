@@ -7,10 +7,16 @@
 
 <body>
     <button id="newsButton">News</button>
+    <button id="weatherButton">Weather</button>
     <button id="logButton">Logs</button>
 
     <script>
         $(document).ready(function(){
+
+            $('#weatherButton').click(function(){
+                logInteraction("MenuButton", "Access Weather")
+                window.location.href = 'weather.html';
+            })
 
             $('#newsButton').click(function(){
                 logInteraction("MenuButton", "Access News")
