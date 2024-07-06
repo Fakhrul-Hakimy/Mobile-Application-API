@@ -4,34 +4,156 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather API Example</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var apiUrl = 'http://api.weatherapi.com/v1/current.json?key=3627c39e0ece47a396b163556242406&q=Sintok&aqi=no';
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-image: url('https://wallpapercave.com/wp/wp11580901.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
-            // Fetch weather data
-            fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Handle successful response
-                    const weather = data.current;
-                    $('p').html(`Temperature in ${data.location.name}: ${weather.temp_c}°C`);
-                    $('p').append(`<br>Last Update time: ${data.location.localtime}`);
-                })
-                .catch(error => {
-                    // Handle errors
-                    console.error('Error fetching data:', error);
-                    $('p').html('Error fetching data');
-                });
-        });
-    </script>
+        .white-bg-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <p>Loading...</p>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 white-bg-container">
+                <h2 class="text-center mb-4">Weather API Example</h2>
+                <div id="weatherTitle" class="mt-4"></div>
+                <div class="form-group">
+                    <input type="text" id="city" class="form-control" placeholder="Enter city name">
+                </div>
+                <button id="Btn" class="btn btn-primary btn-block">Get Weather</button>
+                <div id="weatherContent" class="mt-4"></div>
+                <canvas id="weatherChart" class="mt-4"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var apiKey = '794ec3dd31384819b04c451a33ff83db';
+            var apiUrl = 'https://api.weatherbit.io/v2.0/current';
+            var weatherChart;
+
+            $('#Btn').click(function () {
+                var city = $('#city').val();
+                if (city) {
+                    console.log('City:', city);
+                    // Log user interaction
+                    logInteraction('Weather API', city);
+
+                    // Use Geocoding API to get latitude and longitude for the city
+                    $.ajax({
+                        url: `https://api.weatherbit.io/v2.0/current?city=${city}&key=${apiKey}`,
+                        dataType: 'json',
+                        success: function(geoResponse) {
+                            console.log('Geocoding Response:', geoResponse);
+                            if (geoResponse.error) {
+                                $('#weatherContent').html('<p>' + geoResponse.error + '</p>');
+                            } else {
+                                var lat = geoResponse.data[0].lat;
+                                var lon = geoResponse.data[0].lon;
+                                
+                                $.ajax({
+                                    url: apiUrl,
+                                    data: {
+                                        lat: lat,
+                                        lon: lon,
+                                        key: apiKey,
+                                        include: 'minutely'
+                                    },
+                                    dataType: 'json',
+                                    success: function(apiResponse) {
+                                        console.log('API Response:', apiResponse);
+                                        if (apiResponse.error) {
+                                            $('#weatherContent').html('<p>' + apiResponse.error + '</p>');
+                                        } else {
+                                            $('#weatherContent').empty(); // Clear previous content
+                                            $('#weatherTitle').html(`<p>Weather in ${apiResponse.data[0].city_name}, ${apiResponse.data[0].country_code} (Last updated: ${moment(apiResponse.data[0].ts * 1000).format('MMMM Do YYYY, h:mm:ss a')})</p>`);
+                                            $('#weatherContent').append(`<p><strong>Temperature:</strong> ${apiResponse.data[0].temp}°C</p>`);
+                                            $('#weatherContent').append(`<p><strong>Weather Description:</strong> ${apiResponse.data[0].weather.description}</p>`);
+                                            $('#weatherContent').append(`<p><strong>Humidity:</strong> ${apiResponse.data[0].rh}%</p>`);
+                                            $('#weatherContent').append(`<p><strong>Wind Speed:</strong> ${apiResponse.data[0].wind_spd} m/s</p>`);
+                                            
+                                            // Append weather icon
+                                            var iconCode = apiResponse.data[0].weather.icon;
+                                            var iconUrl = `https://www.weatherbit.io/static/img/icons/${iconCode}.png`;
+                                            $('#weatherContent').append(`<p><img src="${iconUrl}" alt="Weather icon"></p>`);
+
+                                            // Create or update the chart for temperature trends
+                                            var ctx = document.getElementById('weatherChart').getContext('2d');
+                                            if (weatherChart) {
+                                                weatherChart.data.datasets[0].data = [apiResponse.data[0].temp];
+                                                weatherChart.update();
+                                            } else {
+                                                weatherChart = new Chart(ctx, {
+                                                    type: 'line',
+                                                    data: {
+                                                        labels: ['Now'],
+                                                        datasets: [{
+                                                            label: 'Temperature (°C)',
+                                                            data: [apiResponse.data[0].temp],
+                                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                                            borderColor: 'rgba(54, 162, 235, 1)',
+                                                            borderWidth: 1
+                                                        }]
+                                                    },
+                                                    options: {
+                                                        scales: {
+                                                            y: {
+                                                                beginAtZero: true
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    },
+                                    error: function(error) {
+                                        console.error('Error fetching weather data:', error);
+                                        $('#weatherContent').html('<p>Error fetching weather data</p>');
+                                    }
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.error('Error fetching geocoding data:', error);
+                            $('#weatherContent').html('<p>Error fetching geocoding data</p>');
+                        }
+                    });
+                } else {
+                    $('#weatherContent').html('<p>Please enter a city name.</p>');
+                }
+            });
+
+            // Function to log user interaction
+            function logInteraction(action, city) {
+                var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+                var timestamp = new Date().toLocaleString();
+                var interaction = {
+                    timestamp: timestamp,
+                    action: action,
+                    city: city
+                };
+                interactions.push(interaction);
+                localStorage.setItem('userInteractions', JSON.stringify(interactions));
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
