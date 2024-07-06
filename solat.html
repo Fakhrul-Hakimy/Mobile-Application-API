@@ -6,6 +6,9 @@
     <title>Waktu Solat</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Moment.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <style>
         body {
@@ -21,21 +24,116 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
+        .prayer-time-card {
+            margin-bottom: 15px;
+        }
+
+        .card-header, .card-body {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="row">
+            
             <div class="col-md-6 offset-md-3 white-bg-container">
+                <button id="HomeBtn" class="btn btn-primary btn-block">Home</button><br>
                 <h2 class="text-center mb-4">Waktu Solat</h2>
                 <div class="form-group">
                     <label for="location">Select Location:</label>
                     <select id="location" class="form-control">
-                        <option value="sgr01">Selangor</option>
-                        <option value="jhr01">Johor</option>
-                        <option value="kdh01">Kedah</option>
-                        <!-- Add more locations as needed -->
+                        <option value="0">Please choose a state...</option>
+                        <optgroup label="Selangor">
+                            <option value="SGR01">Gombak, Petaling, Sepang, Hulu Langat, Hulu Selangor, Shah Alam</option>
+                            <option value="SGR02">Kuala Selangor, Sabak Bernam</option>
+                            <option value="SGR03">Klang, Kuala Langat</option>
+                        </optgroup>
+                        <optgroup label="Johor">
+                            <option value="JHR01">Pulau Aur dan Pulau Pemanggil</option>
+                            <option value="JHR02">Johor Bahru, Kota Tinggi, Mersing, Kulai</option>
+                            <option value="JHR03">Kluang, Pontian</option>
+                            <option value="JHR04">Batu Pahat, Muar, Segamat, Gemas Johor, Tangkak</option>
+                        </optgroup>
+                        <optgroup label="Kedah">
+                            <option value="KDH01">Kota Setar, Kubang Pasu, Pokok Sena (Daerah Kecil)</option>
+                            <option value="KDH02">Kuala Muda, Yan, Pendang</option>
+                            <option value="KDH03">Padang Terap, Sik</option>
+                            <option value="KDH04">Baling</option>
+                            <option value="KDH05">Bandar Baharu, Kulim</option>
+                            <option value="KDH06">Langkawi</option>
+                            <option value="KDH07">Puncak Gunung Jerai</option>
+                        </optgroup>
+                        <optgroup label="Kelantan">
+                            <option value="KTN01">Bachok, Kota Bharu, Machang, Pasir Mas, Pasir Puteh, Tanah Merah, Tumpat, Kuala Krai, Mukim Chiku</option>
+                            <option value="KTN02">Gua Musang (Daerah Galas Dan Bertam), Jeli, Jajahan Kecil Lojing</option>
+                        </optgroup>
+                        <optgroup label="Melaka">
+                            <option value="MLK01">SELURUH NEGERI MELAKA</option>
+                        </optgroup>
+                        <optgroup label="Negeri Sembilan">
+                            <option value="NGS01">Tampin, Jempol</option>
+                            <option value="NGS02">Jelebu, Kuala Pilah, Rembau</option>
+                            <option value="NGS03">Port Dickson, Seremban</option>
+                        </optgroup>
+                        <optgroup label="Pahang">
+                            <option value="PHG01">Pulau Tioman</option>
+                            <option value="PHG02">Kuantan, Pekan, Rompin, Muadzam Shah</option>
+                            <option value="PHG03">Jerantut, Temerloh, Maran, Bera, Chenor, Jengka</option>
+                            <option value="PHG04">Bentong, Lipis, Raub</option>
+                            <option value="PHG05">Genting Sempah, Janda Baik, Bukit Tinggi</option>
+                            <option value="PHG06">Cameron Highlands, Genting Higlands, Bukit Fraser</option>
+                        </optgroup>
+                        <optgroup label="Perak">
+                            <option value="PRK01">Tapah, Slim River, Tanjung Malim</option>
+                            <option value="PRK02">Kuala Kangsar, Sg. Siput , Ipoh, Batu Gajah, Kampar</option>
+                            <option value="PRK03">Lenggong, Pengkalan Hulu, Grik</option>
+                            <option value="PRK04">Temengor, Belum</option>
+                            <option value="PRK05">Kg Gajah, Teluk Intan, Bagan Datuk, Seri Iskandar, Beruas, Parit, Lumut, Sitiawan, Pulau Pangkor</option>
+                            <option value="PRK06">Selama, Taiping, Bagan Serai, Parit Buntar</option>
+                            <option value="PRK07">Bukit Larut</option>
+                        </optgroup>
+                        <optgroup label="Perlis">
+                            <option value="PLS01">SELURUH NEGERI PERLIS</option>
+                        </optgroup>
+                        <optgroup label="Pulau Pinang">
+                            <option value="PNG01">SELURUH NEGERI PULAU PINANG</option>
+                        </optgroup>
+                        <optgroup label="Sabah">
+                            <option value="SBH01">Bahagian Sandakan (Timur), Bukit Garam, Semawang, Temanggong, Tambisan, Bandar Sandakan, Sukau</option>
+                            <option value="SBH02">Beluran, Telupid, Pinangah, Terusan, Kuamut, Bahagian Sandakan (Barat)</option>
+                            <option value="SBH03">Lahad Datu, Silabukan, Kunak, Sahabat, Semporna, Tungku, Bahagian Tawau (Timur)</option>
+                            <option value="SBH04">Bandar Tawau, Balong, Merotai, Kalabakan, Bahagian Tawau (Barat)</option>
+                            <option value="SBH05">Kudat, Kota Marudu, Pitas, Pulau Banggi, Bahagian Kudat</option>
+                            <option value="SBH06">Gunung Kinabalu</option>
+                            <option value="SBH07">Kota Kinabalu, Ranau, Kota Belud, Tuaran, Penampang, Papar, Putatan, Bahagian Pantai Barat</option>
+                            <option value="SBH08">Pensiangan, Keningau, Tambunan, Nabawan, Bahagian Pendalaman (Atas)</option>
+                            <option value="SBH09">Beaufort, Kuala Penyu, Sipitang, Tenom, Long Pasia, Membakut, Weston, Bahagian Pendalaman (Bawah)</option>
+                        </optgroup>
+                        <optgroup label="Sarawak">
+                            <option value="SWK01">Limbang, Lawas, Sundar, Trusan</option>
+                            <option value="SWK02">Miri, Niah, Bekenu, Sibuti, Marudi</option>
+                            <option value="SWK03">Pandan, Belaga, Suai, Tatau, Sebauh, Bintulu</option>
+                            <option value="SWK04">Sibu, Mukah, Dalat, Song, Igan, Oya, Balingian, Kanowit, Kapit</option>
+                            <option value="SWK05">Sarikei, Matu, Julau, Rajang, Daro, Bintangor, Belawai</option>
+                            <option value="SWK06">Lubok Antu, Sri Aman, Roban, Debak, Kabong, Lingga, Engkelili, Betong, Spaoh, Pusa, Saratok</option>
+                            <option value="SWK07">Serian, Simunjan, Samarahan, Sebuyau, Meludam</option>
+                            <option value="SWK08">Kuching, Bau, Lundu, Sematan</option>
+                            <option value="SWK09">Zon Khas (Kampung Patarikan)</option>
+                        </optgroup>
+                        <optgroup label="Terengganu">
+                            <option value="TRG01">Kuala Terengganu, Marang, Kuala Nerus</option>
+                            <option value="TRG02">Besut, Setiu</option>
+                            <option value="TRG03">Hulu Terengganu</option>
+                            <option value="TRG04">Dungun, Kemaman</option>
+                        </optgroup>
+                        <optgroup label="Wilayah Persekutuan">
+                            <option value="WLY01">Kuala Lumpur, Putrajaya</option>
+                            <option value="WLY02">Labuan</option>
+                        </optgroup>
                     </select>
+                    
                 </div>
                 <button id="getPrayerTimes" class="btn btn-primary btn-block">Get Prayer Times</button>
                 <div id="prayerTimes" class="mt-4"></div>
@@ -44,39 +142,67 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('getPrayerTimes').addEventListener('click', function () {
-                const zone = document.getElementById('location').value;
-                const apiUrl = `https://api.waktusolat.app/v2/solat/${zone}`;
+        $(document).ready(function () {
+            $('#HomeBtn').click(function(){
+                logInteraction("MenuButton", "Access Home")
+                window.location.href = 'index.html';
+            })
 
-                fetch(apiUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === "success") {
-                            const prayers = data.data.prayers;
-                            const prayerTimesDiv = document.getElementById('prayerTimes');
-                            prayerTimesDiv.innerHTML = ''; // Clear previous content
-                            prayerTimesDiv.innerHTML += '<h4>Prayer Times</h4>';
-                            prayers.forEach(prayer => {
-                                prayerTimesDiv.innerHTML += `<p><strong>Date:</strong> ${prayer.hijri}</p>`;
-                                prayerTimesDiv.innerHTML += `<p><strong>Subuh:</strong> ${moment.unix(prayer.fajr).format('HH:mm')}</p>`;
-                                prayerTimesDiv.innerHTML += `<p><strong>Syuruk:</strong> ${moment.unix(prayer.syuruk).format('HH:mm')}</p>`;
-                                prayerTimesDiv.innerHTML += `<p><strong>Zohor:</strong> ${moment.unix(prayer.dhuhr).format('HH:mm')}</p>`;
-                                prayerTimesDiv.innerHTML += `<p><strong>Asar:</strong> ${moment.unix(prayer.asr).format('HH:mm')}</p>`;
-                                prayerTimesDiv.innerHTML += `<p><strong>Maghrib:</strong> ${moment.unix(prayer.maghrib).format('HH:mm')}</p>`;
-                                prayerTimesDiv.innerHTML += `<p><strong>Isyak:</strong> ${moment.unix(prayer.isha).format('HH:mm')}</p>`;
-                                prayerTimesDiv.innerHTML += '<hr>';
-                            });
-                        } else {
-                            document.getElementById('prayerTimes').innerHTML = '<p>Error fetching prayer times. Please try again later.</p>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching prayer times:', error);
-                        document.getElementById('prayerTimes').innerHTML = '<p>Error fetching prayer times. Please try again later.</p>';
-                    });
+            $('#getPrayerTimes').click(function () {
+                var zone = $('#location').val();
+                if (zone !== "0") {
+                    const apiUrl = `https://api.waktusolat.app/v2/solat/` + zone;
+                    logInteraction("Get Prayer Time", zone)
+                    fetch(apiUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            $('#prayerTimes').empty(); // Clear previous content
+                            $('#prayerTimes').html(`<div class="alert alert-info text-center">Zone: ${data.zone}</div>`);
+                            // Display the last updated time
+                            $('#prayerTimes').append(`<div class="alert alert-info text-center">Last Update: ${moment(data.last_updated).format('MMMM Do YYYY, h:mm:ss a')}</div>`);
+                            
+                            // Loop through the prayer times and display them in cards
+                            for (let prayer of data.prayers) {
+                                $('#prayerTimes').append(`
+                                    <div class="card prayer-time-card">
+                                        <div class="card-header">
+                                            ${prayer.hijri}
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Subuh: ${moment.unix(prayer.fajr).format('HH:mm:ss')}</p>
+                                            <p>Syuruk: ${moment.unix(prayer.syuruk).format('HH:mm:ss')}</p>
+                                            <p>Zohor: ${moment.unix(prayer.dhuhr).format('HH:mm:ss')}</p>
+                                            <p>Asar: ${moment.unix(prayer.asr).format('HH:mm:ss')}</p>
+                                            <p>Maghrib: ${moment.unix(prayer.maghrib).format('HH:mm:ss')}</p>
+                                            <p>Isyak: ${moment.unix(prayer.isha).format('HH:mm:ss')}</p>
+                                        </div>
+                                    </div>
+                                `);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                            $('#prayerTimes').html('<div class="alert alert-danger text-center">Error fetching data</div>');
+                        });
+                }
             });
         });
+        function logInteraction(action, section) {
+                var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+                var timestamp = new Date().toLocaleString();
+                var interaction = {
+                    timestamp: timestamp,
+                    action: action,
+                    section: section
+                };
+                interactions.push(interaction);
+                localStorage.setItem('userInteractions', JSON.stringify(interactions));
+            }
     </script>
 
     <!-- Bootstrap JS and dependencies -->
