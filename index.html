@@ -10,7 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <style>
         body {
-            background-image: url('https://img.freepik.com/free-photo/abstract-wavy-background_23-2150534079.jpg?t=st=1720305977~exp=1720309577~hmac=23837378b61c9ae3b209b1a51a59245c1f411cda61ca3c64699eb907eb8b29de&w=1380');
+            background-image: url('main_background.png');
             /* Replace with your image path */
             background-size: cover;
             background-repeat: no-repeat;
@@ -27,18 +27,21 @@
         .menu-button {
             margin-bottom: 10px;
         }
+
+        .container img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
     <div class="container mt-5">
-        
         <div class="row justify-content-center">
-            
             <div class="col-md-6">
-                
                 <div class="white-bg-container">
                     <h1 class="text-center mb-4">MOBILE APPLICATION API</h1><br>
+                    <img src="https://static8.depositphotos.com/1000128/1006/i/450/depositphotos_10062530-stock-photo-smartphone-with-cloud-of-application.jpg" class="img-fluid">
                     <button id="newsButton" class="btn btn-primary btn-block menu-button">News</button>
                     <button id="weatherButton" class="btn btn-info btn-block menu-button">Weather</button>
                     <button id="solatButton" class="btn btn-success btn-block menu-button">Solat</button>
@@ -53,22 +56,22 @@
             $('#weatherButton').click(function () {
                 logInteraction("MenuButton", "Access Weather")
                 window.location.href = 'weather.html';
-            })
+            });
 
             $('#solatButton').click(function () {
                 logInteraction("MenuButton", "Access Solat")
                 window.location.href = 'solat.html';
-            })
+            });
 
             $('#newsButton').click(function () {
                 logInteraction("MenuButton", "Access News")
                 window.location.href = 'news.html';
-            })
+            });
 
             $('#logButton').click(function () {
                 logInteraction("MenuButton", "Access Logs")
                 window.location.href = 'log.html';
-            })
+            });
 
             function logInteraction(action, section) {
                 var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
