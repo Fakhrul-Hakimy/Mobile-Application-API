@@ -32,6 +32,13 @@
             max-width: 100%;
             height: auto;
         }
+
+        .custom-img {
+            max-width: 50% !important; /* Add !important to override Bootstrap's img-fluid */
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 20px; /* Add margin below the image */
+        }
     </style>
 </head>
 
@@ -41,7 +48,7 @@
             <div class="col-md-6">
                 <div class="white-bg-container">
                     <h1 class="text-center mb-4">MOBILE APPLICATION API</h1><br>
-                    <img src="https://static8.depositphotos.com/1000128/1006/i/450/depositphotos_10062530-stock-photo-smartphone-with-cloud-of-application.jpg" class="img-fluid">
+                    <img src="https://static8.depositphotos.com/1000128/1006/i/450/depositphotos_10062530-stock-photo-smartphone-with-cloud-of-application.jpg" class="img-fluid custom-img">
                     <button id="newsButton" class="btn btn-primary btn-block menu-button">News</button>
                     <button id="weatherButton" class="btn btn-info btn-block menu-button">Weather</button>
                     <button id="solatButton" class="btn btn-success btn-block menu-button">Solat</button>
