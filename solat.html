@@ -32,12 +32,20 @@
         .card-header, .card-body {
             text-align: center;
         }
+
+        .highlight {
+            background-color: yellow;
+        }
+
+        .current-prayer {
+            background-color: #c2ffdc;
+            border: 2px solid rgb(44, 223, 20);
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="row">
-            
             <div class="col-md-6 offset-md-3 white-bg-container">
                 <button id="HomeBtn" class="btn btn-primary btn-block">Home</button><br>
                 <h2 class="text-center mb-4">Waktu Solat</h2>
@@ -45,6 +53,7 @@
                     <label for="location">Select Location:</label>
                     <select id="location" class="form-control">
                         <option value="0">Please choose a state...</option>
+                        <!-- List of locations -->
                         <optgroup label="Selangor">
                             <option value="SGR01">Gombak, Petaling, Sepang, Hulu Langat, Hulu Selangor, Shah Alam</option>
                             <option value="SGR02">Kuala Selangor, Sabak Bernam</option>
@@ -133,7 +142,6 @@
                             <option value="WLY02">Labuan</option>
                         </optgroup>
                     </select>
-                    
                 </div>
                 <button id="getPrayerTimes" class="btn btn-primary btn-block">Get Prayer Times</button>
                 <div id="prayerTimes" class="mt-4"></div>
@@ -143,11 +151,13 @@
 
     <script>
         $(document).ready(function () {
+            // Handle Home button click
             $('#HomeBtn').click(function(){
                 logInteraction("MenuButton", "Access Home")
                 window.location.href = 'index.html';
             })
 
+            // Handle Get Prayer Times button click
             $('#getPrayerTimes').click(function () {
                 var zone = $('#location').val();
                 if (zone !== "0") {
@@ -161,17 +171,42 @@
                             return response.json();
                         })
                         .then(data => {
-                            $('#prayerTimes').empty(); // Clear previous content
+                            // Clear previous content
+                            $('#prayerTimes').empty();
+                            // Display the zone and last updated time
                             $('#prayerTimes').html(`<div class="alert alert-info text-center">Zone: ${data.zone}</div>`);
-                            // Display the last updated time
                             $('#prayerTimes').append(`<div class="alert alert-info text-center">Last Update: ${moment(data.last_updated).format('MMMM Do YYYY, h:mm:ss a')}</div>`);
                             
+                            // Get current time
+                            const now = moment();
+
                             // Loop through the prayer times and display them in cards
+                            let currentPrayer = null;
                             for (let prayer of data.prayers) {
-                                $('#prayerTimes').append(`
-                                    <div class="card prayer-time-card">
+                                const prayerTimes = {
+                                    fajr: moment.unix(prayer.fajr),
+                                    syuruk: moment.unix(prayer.syuruk),
+                                    dhuhr: moment.unix(prayer.dhuhr),
+                                    asr: moment.unix(prayer.asr),
+                                    maghrib: moment.unix(prayer.maghrib),
+                                    isha: moment.unix(prayer.isha)
+                                };
+
+                                // Determine if the current time is within the range of a prayer time
+                                let isCurrent = false;
+                                for (const [name, time] of Object.entries(prayerTimes)) {
+                                    if (now.isSame(time, 'day') && now.isAfter(time)) {
+                                        currentPrayer = { name, time, prayer };
+                                        isCurrent = true;
+                                        break;
+                                    }
+                                }
+
+                                // Generate the prayer time card HTML
+                                const cardHtml = `
+                                    <div class="card prayer-time-card ${isCurrent ? 'current-prayer' : ''}">
                                         <div class="card-header">
-                                            ${prayer.hijri}
+                                            Hijri Date: ${prayer.hijri} | Local Date: ${moment.unix(prayer.fajr).format('MMMM Do YYYY')}
                                         </div>
                                         <div class="card-body">
                                             <p>Subuh: ${moment.unix(prayer.fajr).format('HH:mm:ss')}</p>
@@ -182,7 +217,14 @@
                                             <p>Isyak: ${moment.unix(prayer.isha).format('HH:mm:ss')}</p>
                                         </div>
                                     </div>
-                                `);
+                                `;
+
+                                // If it's the current prayer, prepend the card; otherwise, append it
+                                if (isCurrent) {
+                                    $('#prayerTimes').prepend(cardHtml);
+                                } else {
+                                    $('#prayerTimes').append(cardHtml);
+                                }
                             }
                         })
                         .catch(error => {
@@ -192,17 +234,19 @@
                 }
             });
         });
+
+        // Function to log user interactions
         function logInteraction(action, section) {
-                var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
-                var timestamp = new Date().toLocaleString();
-                var interaction = {
-                    timestamp: timestamp,
-                    action: action,
-                    section: section
-                };
-                interactions.push(interaction);
-                localStorage.setItem('userInteractions', JSON.stringify(interactions));
-            }
+            var interactions = JSON.parse(localStorage.getItem('userInteractions')) || [];
+            var timestamp = new Date().toLocaleString();
+            var interaction = {
+                timestamp: timestamp,
+                action: action,
+                section: section
+            };
+            interactions.push(interaction);
+            localStorage.setItem('userInteractions', JSON.stringify(interactions));
+        }
     </script>
 
     <!-- Bootstrap JS and dependencies -->
